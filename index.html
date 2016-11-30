@@ -4,6 +4,10 @@
     <title>Hello JSX React</title>
     <meta charset="utf-8">
     <style>
+    body {
+      font-family: sans-serif;
+      font-size: 36px;
+    }
     *, *:before, *:after {
       box-sizing: border-box;
     }
@@ -13,6 +17,7 @@
 
     .TicTacToe {
       max-width: 300px;
+      margin: 100px auto;
     }
 
     .tile {
@@ -21,7 +26,7 @@
       padding: 10px;
     }
 
-    .TicTacToe.game-in-progress .tile.tile-free {
+    .board.game-in-progress .tile.tile-free {
       cursor: pointer;
     }
 
@@ -135,7 +140,7 @@
         },
 
         render: function() {
-          return <div>
+          return <div className="TicTacToe">
             {this.renderBoard()}
             {this.renderWinner()}
           </div>;
@@ -143,7 +148,7 @@
 
         renderBoard: function() {
           const {board, winner} = this.state;
-          const boardClasses = ['TicTacToe'];
+          const boardClasses = ['board'];
           if (winner === 'to-be-determined') {
             boardClasses.push('game-in-progress');
           }
@@ -178,8 +183,17 @@
         },
 
         renderWinner: function() {
-          if (this.state.winner === 'x' || this.state.winner === 'y') {
-            return <div>{this.state.winner} wins! <button onClick={this.resetGame}>new game</button></div>
+          if (this.state.winner === 'x' || this.state.winner === 'o') {
+            return (
+              <div style={{marginTop: '25px', textAlign:'center'}}>
+                <div>
+                  <img style={{width: '30px'}} src={`${this.state.winner}.svg`} /> wins!
+                </div>
+                <div>
+                  <button onClick={this.resetGame}>New game</button>
+                </div>
+              </div>
+            );
           }
           if (this.state.winner === 'draw') {
             return <div>It’s a draw. <button onClick={this.resetGame}>new game</button></div>
