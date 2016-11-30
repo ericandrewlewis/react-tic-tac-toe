@@ -16,13 +16,20 @@
     }
 
     .tile {
-      width: 33%;
-      padding-bottom: 50%;
-      border: 1px solid black;
+      height: 100px;
+      width: 100px;
     }
 
     .TicTacToe.game-in-progress .tile.tile-free {
       cursor: pointer;
+    }
+
+    .tile:nth-child(1), .tile:nth-child(2) {
+      border-right: 5px solid black;
+    }
+    .row:nth-child(1) .tile,
+    .row:nth-child(2) .tile {
+      border-bottom: 5px solid black;
     }
     </style>
   </head>
@@ -106,6 +113,17 @@
           });
         },
 
+        resetGame: function() {
+          this.setState(this.getInitialState());
+        },
+
+        render: function() {
+          return <div>
+            {this.renderBoard()}
+            {this.renderWinner()}
+          </div>;
+        },
+
         renderBoard: function() {
           const {board, winner} = this.state;
           const boardClasses = ['TicTacToe'];
@@ -142,10 +160,6 @@
           );
         },
 
-        resetGame: function() {
-          this.setState(this.getInitialState());
-        },
-
         renderWinner: function() {
           if (this.state.winner === 'x' || this.state.winner === 'y') {
             return <div>{this.state.winner} wins! <button onClick={this.resetGame}>new game</button></div>
@@ -153,14 +167,8 @@
           if (this.state.winner === 'draw') {
             return <div>It’s a draw. <button onClick={this.resetGame}>new game</button></div>
           }
-        },
-
-        render: function() {
-          return <div>
-            {this.renderBoard()}
-            {this.renderWinner()}
-          </div>;
         }
+
       });
       ReactDOM.render(
         React.createElement(TicTacToe),
