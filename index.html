@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello JSX React</title>
+    <meta charset="utf-8">
+    <style>
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
+    .row {
+      display: flex;
+    }
+
+    .TicTacToe {
+      max-width: 300px;
+    }
+
+    .tile {
+      width: 33%;
+      padding-bottom: 50%;
+      border: 1px solid black;
+    }
+
+    .TicTacToe.game-in-progress .tile.tile-free {
+      cursor: pointer;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <!-- my app renders here -->
+    </div>
+    <script src="react/build/react.js"></script>
+    <script src="react/build/react-dom.js"></script>
+    <script src="babel/browser.js"></script>
+    <script type="text/babel">
+      const Tile = React.createClass({
+        triggerOnClick: function(event) {
+          if (this.props.onClick) {
+            this.props.onClick(event);
+          }
+        },
+        render: function() {
+          const classNames = ['tile'];
+          if (!this.props.taken) {
+            classNames.push('tile-free');
+          }
+          return <div onClick={this.triggerOnClick} className={classNames.join(' ')}>{this.props.taken}</div>;
+        }
+      });
+
+      function checkForAWinner(board) {
+        let i;
+        // Check horizontal.
+        for (i = 0; i < 9; i = i+3) {
+          if (board[i] !== null && board[i] === board[i+1] && board[i+1] === board[i+2]) {
+            return board[i];
+          }
+        }
+        // Check vertical.
+        for (i = 0; i < 3; i++) {
+          if (board[i] !== null && board[i] === board[i+3] && board[i+3] === board[i+6]) {
+            return board[i];
+          }
+        }
+        // Check diagonals.
+        if (board[0] !== null && board[0] === board[4] && board[4] === board[8]) {
+          return board[0];
+        }
+        if (board[2] !== null && board[2] === board[4] && board[4] === board[6]) {
+          return board[2];
+        }
+        const boardStillHasOpenTiles = board.some((value) => {
+          return value === null;
+        })
+        if (!boardStillHasOpenTiles) {
+          return 'draw';
+        }
+        return 'to-be-determined';
+      };
+
+      const TicTacToe = React.createClass({
+        getInitialState: function() {
+          return {
+            board: [null, null, null,
+                    null, null, null,
+                    null, null, null],
+            currentPlayersTurn: 'x',
+            winner: 'to-be-determined',
+          };
+        },
+
+        tileClicked: function(tileIndex) {
+          // Bail if the tile has already been taken.
+          if (this.state.board[tileIndex] !== null) {
+            return;
+          }
+          const board = Array.from(this.state.board);
+          board[tileIndex] = this.state.currentPlayersTurn;
+          const winner = checkForAWinner(board);
+          this.setState({
+            board,
+            currentPlayersTurn: this.state.currentPlayersTurn === 'x' ? 'y' : 'x',
+            winner: winner,
+          });
+        },
+
+        renderBoard: function() {
+          const {board, winner} = this.state;
+          const boardClasses = ['TicTacToe'];
+          if (winner === 'to-be-determined') {
+            boardClasses.push('game-in-progress');
+          }
+          return (
+            <div className={boardClasses.join(' ')}>
+              <div className="row">
+                <Tile onClick={() => {this.tileClicked(0)}}
+                      taken={board[0]} />
+                <Tile onClick={() => {this.tileClicked(1)}}
+                      taken={board[1]} />
+                <Tile onClick={() => {this.tileClicked(2)}}
+                      taken={board[2]} />
+              </div>
+              <div className="row">
+                <Tile onClick={() => {this.tileClicked(3)}}
+                      taken={board[3]} />
+                <Tile onClick={() => {this.tileClicked(4)}}
+                      taken={board[4]} />
+                <Tile onClick={() => {this.tileClicked(5)}}
+                      taken={board[5]} />
+              </div>
+              <div className="row">
+                <Tile onClick={() => {this.tileClicked(6)}}
+                      taken={board[6]} />
+                <Tile onClick={() => {this.tileClicked(7)}}
+                      taken={board[7]} />
+                <Tile onClick={() => {this.tileClicked(8)}}
+                      taken={board[8]} />
+              </div>
+            </div>
+          );
+        },
+
+        resetGame: function() {
+          this.setState(this.getInitialState());
+        },
+
+        renderWinner: function() {
+          if (this.state.winner === 'x' || this.state.winner === 'y') {
+            return <div>{this.state.winner} wins! <button onClick={this.resetGame}>new game</button></div>
+          }
+          if (this.state.winner === 'draw') {
+            return <div>It’s a draw. <button onClick={this.resetGame}>new game</button></div>
+          }
+        },
+
+        render: function() {
+          return <div>
+            {this.renderBoard()}
+            {this.renderWinner()}
+          </div>;
+        }
+      });
+      ReactDOM.render(
+        React.createElement(TicTacToe),
+        document.getElementById('app')
+      );
+    </script>
+  </body>
+</html>
