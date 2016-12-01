@@ -121,8 +121,8 @@
         },
 
         tileClicked: function(tileIndex) {
-          // Bail if the tile has already been taken.
-          if (this.state.board[tileIndex] !== null) {
+          // Bail if the tile has already been taken, or if the game is over.
+          if (this.state.board[tileIndex] !== null || (this.state.winner !== 'to-be-determined')) {
             return;
           }
           const board = Array.from(this.state.board);
